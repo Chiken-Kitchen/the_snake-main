@@ -132,16 +132,19 @@ class Snake(GameObject):
     def update_direction(self, new_direction):
         """Метод обновляющий направление движения змейки."""
         self.direction = new_direction
+        # Тут я так и не понял, определяем атрибут для чего?
+        # Надо ли сюда передавать направления, по ТЗ этот кусок из прекода.
+        # И в нем по умолчанию стоит next_direction = None
         new_direction = None
 
     def move(self):
         """Метод обновляющий положение змейки."""
         head = self.get_head_position()
         {
-            RIGHT: (head[0] + GRID_SIZE, head[1]),
-            LEFT: (head[0] - GRID_SIZE, head[1]),
-            UP: (head[0], head[1] - GRID_SIZE),
-            DOWN: (head[0], head[1] + GRID_SIZE)
+            RIGHT: pygame.K_RIGHT,
+            LEFT: pygame.K_LEFT,
+            UP: pygame.K_UP,
+            DOWN: pygame.K_DOWN
         }
         x, y = (((head[0] + self.direction[0] * GRID_SIZE) % SCREEN_WIDTH),
                 ((head[1] + self.direction[1] * GRID_SIZE) % SCREEN_HEIGHT))
@@ -150,10 +153,11 @@ class Snake(GameObject):
         (с помощью операции модуля по ширине и высоте экрана)."""
         self.positions.insert(0, (x, y))
         """Обновляет позицию змейки (координаты каждой секции), добавляя новую
-        голову в начало списка positions и удаляя последний элемент,
-        если длина змейки не увеличилась."""
+        голову в начало списка positions."""
         if len(self.positions) > self.length:
             self.positions.pop()
+        """И удаляя последний элемент,
+        если длина змейки не увеличилась."""
 
 
 def handle_keys(game_object):
