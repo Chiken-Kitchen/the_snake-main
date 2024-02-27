@@ -68,9 +68,8 @@ class Apple(GameObject):
 
     def __init__(self, body_color=APPLE_COLOR, position=INITIAL_POSITION):
         """Дочерний конструктор принимающий атрибуты позиции и цвета."""
-        super().__init__(body_color, position)
-        self.body_color = body_color
-        self.randomize_position()
+        super().__init__(body_color, position=position)
+        self.position = self.randomize_position()
 
     @classmethod
     def randomize_position(cls):
@@ -126,34 +125,33 @@ class Snake(GameObject):
     def reset(self):
         """Метод сбрасывающий змейку в начальное состояние."""
         self.length = 1
-        self.direction = choice([RIGHT, LEFT, UP, DOWN])
-        self.positions = [INITIAL_POSITION]
+        self.direction = choice([UP, LEFT, DOWN, RIGHT])
+        self.positions = [self.position]
         self.last = None
 
     def update_direction(self, new_direction):
         """Метод обновляющий направление движения змейки."""
-        if new_direction:
-            self.direction = new_direction
-            self.new_direction = (UP, DOWN, RIGHT, LEFT)
+        self.direction = new_direction
+        new_direction = None
 
     def move(self):
         """Метод обновляющий положение змейки."""
         head = self.get_head_position()
-        directions = {
+        {
             RIGHT: (head[0] + GRID_SIZE, head[1]),
             LEFT: (head[0] - GRID_SIZE, head[1]),
             UP: (head[0], head[1] - GRID_SIZE),
             DOWN: (head[0], head[1] + GRID_SIZE)
         }
-        new_head = directions[self.direction]
-
-        x = (head[0] + self.direction[0] * GRID_SIZE) % SCREEN_WIDTH
-        y = (head[1] + self.direction[1] * GRID_SIZE) % SCREEN_HEIGHT
-
-        if new_head in self.positions:
-            self.reset()
-        else:
-            self.positions.insert(0, (x, y))
+        x, y = (((head[0] + self.direction[0] * GRID_SIZE) % SCREEN_WIDTH),
+                ((head[1] + self.direction[1] * GRID_SIZE) % SCREEN_HEIGHT))
+        """Также применяется обработка краёв экрана: если змейка достигает
+        края экрана, она появляется с противоположной стороны
+        (с помощью операции модуля по ширине и высоте экрана)."""
+        self.positions.insert(0, (x, y))
+        """Обновляет позицию змейки (координаты каждой секции), добавляя новую
+        голову в начало списка positions и удаляя последний элемент,
+        если длина змейки не увеличилась."""
         if len(self.positions) > self.length:
             self.positions.pop()
 
@@ -189,19 +187,24 @@ def main():
         snake.move()
         apple.draw(screen)
         snake.draw(screen)
-
         if snake.get_head_position() == apple.position:
             snake.length += 1
+        if snake.get_head_position() in snake.positions[1:]:
+            """Сброс в случае столкновения."""
+            snake.reset()
         """Увеличение змейки."""
         while apple.position in snake.positions:
             """Проверка не находится ли яблоко в змейке."""
             apple.position = apple.randomize_position()
         pygame.display.update()
-        """Сброс змейки."""
-        if snake.get_head_position() in snake.positions[-1]:
-            snake.reset()
 
 
 if __name__ == '__main__':
     main()
 """Условный оператор запускающий код напрямую."""
+
+
+# RIGHT: (head[0] + GRID_SIZE, head[1]),
+# LEFT: (head[0] - GRID_SIZE, head[1]),
+# UP: (head[0], head[1] - GRID_SIZE),
+# DOWN: (head[0], head[1] + GRID_SIZE)
