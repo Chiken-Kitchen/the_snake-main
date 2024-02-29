@@ -132,10 +132,6 @@ class Snake(GameObject):
     def update_direction(self, new_direction):
         """Метод обновляющий направление движения змейки."""
         self.direction = new_direction
-        # Тут я так и не понял, определяем атрибут для чего?
-        # Надо ли сюда передавать направления, по ТЗ этот кусок из прекода.
-        # И в нем по умолчанию стоит next_direction = None
-        new_direction = None
 
     def move(self):
         """Метод обновляющий положение змейки."""
@@ -206,9 +202,3 @@ def main():
 if __name__ == '__main__':
     main()
 """Условный оператор запускающий код напрямую."""
-
-
-# RIGHT: (head[0] + GRID_SIZE, head[1]),
-# LEFT: (head[0] - GRID_SIZE, head[1]),
-# UP: (head[0], head[1] - GRID_SIZE),
-# DOWN: (head[0], head[1] + GRID_SIZE)
